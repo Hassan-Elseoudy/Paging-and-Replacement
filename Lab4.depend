@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1545760034 source:/home/smsm/Documents/Linux-Cpp/Lab4/main.cpp
+	<iostream>
+	<vector>
+	<stdio.h>
+
