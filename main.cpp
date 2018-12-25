@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <stdio.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -9,7 +10,13 @@ bool executeLRU(int pages);
 bool executeCLOCK(int pages);
 
 bool checkInArray(int arr [], int n, int element);
+int checkInArrayLRU(pair<int,int> arr [], int n, int element);
+
 void printLine(int arr [],int length, int element,bool boolean);
+void printLineLRU(pair<int,int> arr [],int length, int element,bool boolean);
+
+int getLeastRecentlyUsed(pair<int,int>arr[], int n);
+
 
 
 int main()
@@ -28,7 +35,41 @@ int main()
     return 0;
 }
 bool executeLRU(int pages)
-{}
+{
+    int element = 0, numberOfErrors = 0,escape = 0, ret, counter = 1;
+    cin >> element;
+    pair<int,int> arr [pages];
+    std::fill(&arr[0], &arr[0] + pages, std::make_pair(0, 0));
+    printf("Replacement Policy = LRU\n-------------------------------------\nPage   Content of Frames\n----   -----------------\n");
+    while(element != -1)
+    {
+        ret = checkInArrayLRU(arr,pages,element);
+        if(ret > -1)
+        {
+            arr[ret].second = counter;
+            printLineLRU(arr,pages,element,true);
+        }
+        else
+        {
+            ret = getLeastRecentlyUsed(arr,pages);
+            arr[ret].first = element;
+            arr[ret].second = counter;
+            if(escape < pages)
+                printLineLRU(arr,pages,element,true);
+            else
+            {
+                printLineLRU(arr,pages,element,false);
+                numberOfErrors++;
+            }
+            escape++;
+        }
+        counter++;
+        cin >> element;
+    }
+    printf("-------------------------------------\nNumber of page faults = %d",numberOfErrors);
+    return false;
+
+}
 bool executeCLOCK(int pages)
 {}
 bool executeFIFO(int pages)
@@ -70,6 +111,15 @@ bool checkInArray(int arr [], int n, int element)
     return false;
 }
 
+int checkInArrayLRU( pair<int,int> arr [], int n, int element)
+{
+    for(int i = 0; i < n; i++)
+        if(arr[i].first == element)
+            return i;
+
+    return -1;
+}
+
 void printLine(int arr [],int length, int element,bool boolean)
 {
     printf("%02d ",element);
@@ -77,4 +127,22 @@ void printLine(int arr [],int length, int element,bool boolean)
     for(int i = 0; i < length; i++)
         arr[i] == 0 ? printf("   ") : printf("%02d ",arr[i]);
     printf("\n");
+}
+
+void printLineLRU(pair<int,int> arr [],int length, int element,bool boolean)
+{
+    printf("%02d ",element);
+    boolean == true ? printf("    ") : printf("F   ");
+    for(int i = 0; i < length; i++)
+        arr[i].first == 0 ? printf("   ") : printf("%02d ",arr[i].first);
+    printf("\n");
+}
+
+int getLeastRecentlyUsed(pair<int,int> arr[], int n)
+{
+    int idx = 0;
+    for(int i = 0; i < n; i++)
+        if(arr[i].second < arr[idx].second && arr[idx].second != 0)
+            idx = i;
+    return idx;
 }
