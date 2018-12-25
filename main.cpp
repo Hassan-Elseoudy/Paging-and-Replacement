@@ -71,7 +71,46 @@ bool executeLRU(int pages)
 
 }
 bool executeCLOCK(int pages)
-{}
+{
+    int element = 0, numberOfErrors = 0,escape = 0, ret = 0, iter = 0;
+    cin >> element;
+    pair<int,int> arr [pages];
+    std::fill(&arr[0], &arr[0] + pages, std::make_pair(0, 0));
+    printf("Replacement Policy = CLOCK\n-------------------------------------\nPage   Content of Frames\n----   -----------------\n");
+    while(element != -1)
+    {
+        ret = checkInArrayLRU(arr,pages,element);
+        if(ret > -1)
+        {
+            arr[ret].second = 1;
+            printLineLRU(arr,pages,element,true);
+        }
+        else
+        {
+            while(arr[iter].second != 0)
+            {
+                arr[iter].second = 0;
+                iter++;
+                iter %= pages;
+            }
+            arr[iter].first = element;
+            arr[iter].second = 1;
+            if(escape < pages)
+                printLineLRU(arr,pages,element,true);
+            else
+            {
+                printLineLRU(arr,pages,element,false);
+                numberOfErrors++;
+            }
+            iter++;
+            iter %= pages;
+            escape++;
+        }
+        cin >> element;
+    }
+    printf("-------------------------------------\nNumber of page faults = %d",numberOfErrors);
+    return false;
+}
 bool executeFIFO(int pages)
 {
     int element = 0, numberOfErrors = 0, iter = 0, escape = 0;
