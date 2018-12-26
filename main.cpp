@@ -49,7 +49,7 @@ bool executeFIFO(int pages)
     int element = 0, numberOfErrors = 0, iter = 0, ret = 0, escape = 0;
     cin >> element; //Scanning each element.
     pair<int,int> arr[pages];
-    std::fill(&arr[0],&arr[0] + pages,std::make_pair(0,0));
+    std::fill(&arr[0],&arr[0] + pages,std::make_pair(-1,-1));
     printf("Replacement Policy = FIFO\n-------------------------------------\nPage   Content of Frames\n----   -----------------\n");
     while(element != -1)
     {
@@ -91,7 +91,7 @@ bool executeLRU(int pages)
     int element = 0, numberOfErrors = 0,escape = 0, ret, counter = 1;
     cin >> element;
     pair<int,int> arr [pages];
-    std::fill(&arr[0], &arr[0] + pages, std::make_pair(0, 0));
+    std::fill(&arr[0], &arr[0] + pages, std::make_pair(-1, 0));
     printf("Replacement Policy = LRU\n-------------------------------------\nPage   Content of Frames\n----   -----------------\n");
     while(element != -1)
     {
@@ -102,7 +102,8 @@ bool executeLRU(int pages)
             printLine(arr,pages,element,true); //Printing Line by Line
         }
         else
-        {   /* If element is not in the pair, we have to get LRU and replace it */
+        {
+            /* If element is not in the pair, we have to get LRU and replace it */
             ret = getLeastRecentlyUsed(arr,pages);
             arr[ret].first = element;
             arr[ret].second = counter;
@@ -138,7 +139,7 @@ bool executeCLOCK(int pages)
     int element = 0, numberOfErrors = 0,escape = 0, ret = 0, iter = 0;
     cin >> element;
     pair<int,int> arr [pages];
-    std::fill(&arr[0], &arr[0] + pages, std::make_pair(0, 0));
+    std::fill(&arr[0], &arr[0] + pages, std::make_pair(-1, 0));
     printf("Replacement Policy = CLOCK\n-------------------------------------\nPage   Content of Frames\n----   -----------------\n");
     while(element != -1)
     {
@@ -151,7 +152,8 @@ bool executeCLOCK(int pages)
         else
         {
             while(arr[iter].second != 0)
-            {   /* We have to remove one now, Let's looking which element has its pointer = 0*/
+            {
+                /* We have to remove one now, Let's looking which element has its pointer = 0*/
                 arr[iter].second = 0;
                 iter++;
                 iter %= pages;
@@ -190,8 +192,8 @@ void printLine(pair<int,int> arr [],int length, int element,bool boolean)
     printf("%02d ",element);
     boolean == true ? printf("    ") : printf("F   ");
     for(int i = 0; i < length; i++)
-    /* If there's not a value yet print spaces, else padding the page number to a 2-digit number */
-        arr[i].first == 0 ? printf("   ") : printf("%02d ",arr[i].first);
+        /* If there's not a value yet print spaces, else padding the page number to a 2-digit number */
+        arr[i].first == -1 ? printf("   ") : printf("%02d ",arr[i].first);
     printf("\n");
 }
 
@@ -199,7 +201,7 @@ int getLeastRecentlyUsed(pair<int,int> arr[], int n)
 {
     int idx = 0;
     for(int i = 0; i < n; i++)
-        if(arr[i].second < arr[idx].second && arr[idx].second != 0)
+        if(arr[i].second < arr[idx].second && arr[idx].second != -1)
             idx = i;
     return idx;
 }
